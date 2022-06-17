@@ -10,6 +10,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppModelo">
         <activity
+            android:name=".TelaCardView5"
+            android:exported="false" />
+        <activity
+            android:name=".TelaCardView4"
+            android:exported="false" />
+        <activity
+            android:name=".TelaCardView3"
+            android:exported="false" />
+        <activity
+            android:name=".TelaCardView2"
+            android:exported="false" />
+        <activity
+            android:name=".TelaCardView1"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
