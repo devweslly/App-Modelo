@@ -74,10 +74,10 @@ class MainActivity : AppCompatActivity() {
 
 
 /*
-    * Usando o ViewBinding
+    *** Usando o ViewBinding ***
         - Instalando
 
-    * Criando o Fragments
+    *** Criando o Fragments ***
         * 1) Gerar gráfico de navegação
         * 2) Colocar gráfico de navegação em relação ao container (NavHostFragment)
         * 3) Acessar navController para fazer navegação
@@ -86,5 +86,23 @@ class MainActivity : AppCompatActivity() {
         * name: nav_graph | resource type: Navigation --> OK
 
         * Adicionando novos destinos ao programa (add distination)
-        * Create new destination --> Fragment Blank --> Name: ListFragment --> Finish
+        * Primeiro Fragment - Create new destination --> Fragment Blank --> Name: listFragment --> Finish
+        * Segundo Fragment - Create new destination --> Fragment Blank --> Name: formFragment --> Finish
+        * Ligar os dois fragments e indicar as ações
+        * listFragment navega para o formFragment
+        * FormFragment navega para o listFragment (após salvar uma tarefa)
+        * Para não ser criado uma nova instancia de listFragment, depois de salvar tarefa no formFragment
+        * Selecionar action_formFragment_toListFragment
+        * Vamos usar o comportamento: Pop Behavior --> popUpTo: listFragment (Ao voltar para o list o form será morto)
+        * Para ele criar uma nova tela de listFragment e carregar a lista novamente (criando do zero)
+        * (matando os processos list e form anteriores e criando um novo list)
+        * popUpToInclusive: True
+        * Entrando na unidade dinâmica e montando o layout (frafment_list e fragment_form)
+        * Na activity_main (ou o container onde os fragments irão ficar)
+        * E será criado o NavHostFragment (apenas jogar ele na ViewGroup do no container)
+        * Será preciso ter um nav_graph para o NavHostFragment existir --> Basta pegar o nav_graph criado
+        * Difina as constrains
+        * O primeiro fragment que aparece será o da lista (pois foi definido assim no nav_graph - simbolo da casinha)
+
+        * Fazendo com que os fragments consiga acessar o NavController e fazer a navegação entre eles
 */
