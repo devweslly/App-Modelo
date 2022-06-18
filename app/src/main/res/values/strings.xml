@@ -5,4 +5,7 @@
     <string name="place3_card1">Weiss Bier Cervejaria</string>
     <string name="place4_card1">Hamburgueria Bar Vira Latas</string>
     <string name="place5_card1">Frango Fácil</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="text_listFragment">Neste fragment irá uma lista de Places</string>
+    <string name="text_infoFragment">Neste fragment irá a info do Place</string>
 </resources>
