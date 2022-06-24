@@ -139,5 +139,31 @@ class MainActivity : AppCompatActivity() {
         * Este mesmo processo é usado para o formFragment, mas usando o button salvar
 
     *** Criando o Recycler View ***
-        * Criando o layout
+
+        * Vamos usar recyclerView para fazer a montagem de lista dinâmica
+        * Passos para criar o recyclerView:
+            * Item: Aqui dentro criamos o card ou layout onde os itens serão inseridos
+                    e dentro do item ciramos a classe modelo com as infos dos itens;
+            * Adapter: Vai processar os dados de todos os itens e jogar no viewHolder;
+            * viewHolder: Vai pegar o modelo que fazemos com o nosso item e dizer como irão aparecer.
+                          A partir que o Adapter e a ViewHolder coseguir processar estes itens e mostrar pra gente,
+                          vamos pegar e jogar no recyclerView
+        * Primeiro vamos criar o card/layout que irá aparecer nossos itens que terá as infos.
+        * Este layout irá mostrar todos os nossos itens;
+
+        ** Criando card
+
+        * Em res > layou: Criar um novo layout
+        * (Layout Resource File --> Name: card_layout --> Root Element: cadrView)
+        * Faça um layout para deixar os elementos de forma responsiva,
+        * insira um LinearLayout ou ConstrainLayout dentro da ViewGroup CardView
+        * Agora comece a criar o seu cardView
+
+        * O próximo passo é criar a classe de modelo e fazer a listagem de tarefa
+        * para começar a criar o adapter
+
+        ** Criando Adapter (Para o Recycler View processar os dados)
+
+        * Vamos criar em nosso pacote principal um pacote chamado adapter
+        * 
 */
