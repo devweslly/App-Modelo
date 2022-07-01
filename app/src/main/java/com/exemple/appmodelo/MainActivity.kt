@@ -75,7 +75,23 @@ class MainActivity : AppCompatActivity() {
 
 /*
     *** Usando o ViewBinding ***
-        - Instalando
+        * Em build.gradle, na parte onde tem android {
+        * colocar viewBindig { enabled: True} e fazer o sync now - para ser habilitado para o nosso projeto
+        * este componente através da unidade dinâmica por meio de um unica variavel apenas,
+        * referenciar todos os componetes que temos na unidade dinâmica de cada uma das unidades logicas que temos
+        * Dentro da nossa MainActivity ou outra unidade logica, vamos criar uma nova variavel
+        * private lateinit var binding do tipo que será a classe gerada pelo viewBinding onde podemos buscar
+        * estes componentes que no caso da MainActivity é o ActivityMainBinding (esta classe só existe por causa que habilitamos o viewBinding dentro do projeto)
+        * Agora iremos atribuit um novo valor para a variavel binding.
+        * Primeiro pegamos a classe ActivityMainBinding (ou FragmentListBinding) e vamos utilizar o metodo inflate
+        * E dentro do construtor vamos passar o atributo layoutInflate, agora podemos pegar onde sera inflado este layout
+        * que será o container onde estara inserido nosso fragment. (só se caso estiver referenciado componetes para um fragment)
+        * vamos mostrar qual o container ele será criado (no nosso caso é o próprio container)
+        * vamos colocar em seguida oattachToRoot como false (para fazer o android cuidar de tudo para gente e colocar o fragment dentro do container) (só se caso estiver referenciado componetes para um fragment)
+        * E será retornado a raiz do binding, pq é ele que vai cuidar de todos os componentes (return binding.root)
+        * agora ao utilizar a variavel de binding é possível ter acesso a todos os componentes que estao dentro da unidade dinamica
+        * vamos usar o binding no FormFragment e no restante do projeto
+        * Agora todas as classes o componentes são sejam alterados pelo binding.root
 
     *** Criando o Fragments ***
         * 1) Gerar gráfico de navegação
@@ -162,8 +178,144 @@ class MainActivity : AppCompatActivity() {
         * O próximo passo é criar a classe de modelo e fazer a listagem de tarefa
         * para começar a criar o adapter
 
+        ** Criando classe de modelo e lista de modelo para jogar no recylcerView
+
+        * Cada tarefa vai precisar ter alguns dados para ser possível gerar a tarefa
+        * Criar um pacote com nome model, para guardar todas as classe de modelo do app
+        * Criar um class Tarefa dentro do pacote model (modelo que vai gerar as tarefas)
+        * Será uma classe de modelo que irá gerar objetos que contem as infos
+        * Para que não precise se preocupar com getter, setter e toString,
+        * vamos tonar esta classe uma data Class (classe de dados)
+        * e usando o data class faz com que tenhamos todos os metodos getter, setter e toString sobrescritos
+
+        * Dentro da class Tarefa
+
+        * Para esta classe passar a existir e ser possivel fazer uma instancia dela
+        * Vamos ter todos os atributos da tarefa (definidos no layout do card_layout)
+        * Estes atributos irão dentro de um construtor (var nome: String...)
+        * que com que a classe so passe a existir vai precisar obrigatoriamente do construtor
+        * Agora já é possivel começar a gerar uma lista de itens
+        * contemplando a lista de info da class Tarefa (lista base para ser jogada dentro do recyclerView)
+
+        ** Na class ListFragment
+
+        * Vamos gerar uma lista de itens utilizando o listOf
+        * Crie uma val listTarefa: vai guardar uma listagem de tarefas
+        * utilizando o componete de list. O listOf vai ser de varios objetos do tipo Tarefa
+        * Vamos colocar dentro da listOf cada uma das tarefas declarando um novo objeto do tipo Tarefa
+        * e passar as caracteristicas dentro deste objeto. Crie mais tarefas para ter mais itens dentro do card
+        * Próximo passo é configurar nosso adapter e por meio dele processar os dados, jogar na nossa lista
+        * e fazer eles ficarem colocados dentro do card_layout
+
         ** Criando Adapter (Para o Recycler View processar os dados)
 
         * Vamos criar em nosso pacote principal um pacote chamado adapter
-        * 
+        * Na pasta adapter: criar uma Class nomeada como TarefaAdapter
+
+        ** No arquivo TarefaAdapter
+
+        * Para a class TarefaAdapter ser um adapter, precisamos estender ela do RecyclerView.Adapter
+        * E para o Adapter ser um adapter é preciso que ele receba um <ViewHolder>
+        * O ViewHolder é responsável em jogar nossos itens dentro do nosso card_layout (e jogar isso dentro de uma view)
+        * Então, para criar o adapter precisamos criar a classe que vai cuidar da nossa ViewHolder
+        * Vamos criar a ViewHolder dentro da class TarefaAdapter.
+        * Como é uma classe pequena, podemos fazer isso dentro da TarefaAdapter
+
+        * Vamos criar uma class TarefaViewHolder que estende de RecyclerView.ViewHolder
+        * Para a classe conseguir existir e fazer com que ele seja estendido de maneira correta
+        * é preciso receber dentro do construtor do RecyclerView uma view
+        * esta view será o nosso card_layout
+        * Entao nossa class TarefaViewHolder vai receber um construtor onde vamos retornar um objeto do tipo View
+        * e vamos passar este parametro para o contrutor da RecyclerView.ViewHolder()
+        * deste jeito: class TarefaVIewHolder(view: View) : RecyclerView.ViewHolder(view)
+
+        * É dentro desta ViewHolder que vamos ter que referenciar cada um dos itens que temos dentro do card_layout
+        * ou seja, as view do card_layout.
+        * Lembrando que toda vez que temos um arq de layout o binding gerar uma classe que pode referenciar todos
+        * os componentes que tem dentro dos layouts
+        * Entao vamos criar uma variavel dentro do construtor do RecyclerView, no lugar da view que inserimos anteriormente
+        * vamos passar uma val binding onde vamos referenciar o nosso CardLayoutBinding, assim agora ele vai ter acesso
+        * a todos itens que tem dentro do card_layout.
+        * E como queremos retornar nossa view por meio do binding, vamos retornar nosso binding.root
+        * no construtor do RecyclerView.ViewHolder(). Agora ele pode retornar nossa view
+        * e agora podemos criar cada um dos componente aqui dentro
+        * Agora devemos estender a nossa classe do RecyclerView.Adapter passando a viewHolder
+        * (TarefaViewHolder) que acabamos de criar
+        * desta forma aqui: class TarefaAdapter : RecyclerView.Adapter<TarefaAdapter.TarefaVIewHolder>()
+
+        * Agora temos que inserir alguns metodos abstratos de nosso adapter (opção vai aparecer em class TarefaAdapter)
+        * Em implement members vamos selecionar os 3 intens que aparecem
+        * Agora podemos sobrescrever os 3 métodos que vão ter tudo oq é necessário para conseguir processar nossos
+        * itens dentro do nosso adapter
+
+        ** Entendendo como esses 3 metodos funcionam
+        * Imagine o tarefa adapter como um For, sempre que ele for criar um novo item (uma nova tarefa)
+        * e jogar dentro da nossa lista, ele vai ta rodando um loop.
+        * 1- A primeira coisa que ele irá fazer é criar a nossa viewHolder (onCreateViewHolder) e vai
+        * criar nosso card, onde ele vai jogar infos da nossa tarefa (este é primeiro metodo a rodar)
+        * 2- A partir do momento que ele sabe onde ele vai jogar nossos itens, ele irá rodar o
+        * metodo onBindViewHolder onde vamos conseguir conseguir criar nossa tarefa de fato e ir jogando
+        * cada um destes itens dentro de cada um dos componentes que temos do card_layout
+        * do textNome por exemplo, vamos conseguir recuperar o nome da tarefa
+        * 3- O getItemCount vai conseguir retorna para gente o quanto de vezes que ele vai conseguir gerar
+        * esses nossos componentes (por exemplo, se a lista tem 5 itens e a partir deste metodo ele vai saber
+        * que vai ter que loopar este processo exatamente 5 vezes)
+
+        ** Criando oq vai retornar no onCreateViewHolder
+
+        * O onCreateViewHolder consegue retornar pra gente o tipo de retorno dele é o TarefaViewHolder
+        * onde vamos conseguir retornar o nosso binding (do construtor da TarefaViewHolder) que vai conter
+        * tudo oq é necessário para a gente conseguir inflar o nosso card_layout
+        * Para isso, vamos dar o return de um objeto do tipo TarefaViewHolder()
+        * E o TarefaViewHolder() vai precisar retornar um objeto do tipo CardLayoutBiding, para isso
+        * temos que passar o CardLayoutBiding.inflate(), e para retornar um objeto deste tipo vamos precisar
+        * do layoutInflater, o viewGroup que ele será criado e o attchToParent
+        * Vamos criar o layoutInlater do zero: LayoutInflater.from() e dentro dele iremos passar nosso parent.context
+        * (parent) a view group que ele está sendo criado
+        * (context) o contexto da onde estamos criando este nosso layoutInflater. ViewGroup responsável pelo nosso card_layout
+        * passar em qual container ele será criado, nosso parent. E colocar o attchToParent como false
+        * Com isso, quando ele for criar o primeiro item da lista ele já sabe que vai criar isso com base no card_layout
+
+        ** Processar dados no onBindViewHolder
+
+        * Verificar dentro do onBindViewHolder como ele vai processar todos os dados dos nossos itens
+        * dentro do nosso card_layout
+        * Primeiro:
+        * Como o TarefaAdapter vai receber uma lista de item no futuro, vamos precisar criar dentro do TarefaAdapter
+        * um atributo que possa receber essa lista externa (var listTarefa) que vai receber no começo uma
+        * lista vazia emptyList do tipo Tarefa
+        * Quando a gente receber nossa lista, vamos processar os dados desta lista dentro do onBindViewHolder
+
+        * O onBindViewHolder vai sempre recuperar posição atual deste item por meio do position
+        * vamos processar ele dentro do card_layout
+        * Para recuperar este item na posição atual que ele tem vamos criar uma (val tarefa)
+        * que vai receber nossa listTarefa[position] na posição atual que ele tem aqui dentro
+        * Vamos começar a processar cada um destes itens que iremos ter dentro desta tarefa, ou seja,
+        * o nosso nome, descrição, responsável... (dentro de cada ums dos componentes que terão dentro do card_layout)
+        * vamos utilizar o holder e pegar a variavel binding que criamos que tenha referencia dos componentes do card_layout
+        * e setar cada um deles com base nas info que temos de cada um dos nossos objetos da minha classe de modelo Tarefa
+        * vamos setar o texto dele e vamos pegar o nosso tarefa.nome (queremos a info do componente)
+        * Com isso temos todos os textos jogados e processados com base em cada objeto tarefa que vamos ter dentro
+        * da listTarefa (todas as tarefas porcessadas nos itens que temos dentro do card_layout)
+        * Finalizamos o onBindViewHolder
+
+        ** getItemCount
+
+        * Quantas vezes que o onBindViewHolder vai precisar criar os itens dentro do recyclerView
+        * Entao vamos passar dentro do getItemCount o tamanho da nossa lista por meio do return
+        * vamos passar nosso returno com base na nossa listtarefa.size
+
+        ** Para finalizar, vamos criar um metodo para setar a nossa lista
+
+        * Vamos criar um metodo setList e dentro vamos passar uma list do tipo List<Tarefa>
+        * e dentro deste metodo vamos trocar o conteudo da nossa lista vazia pela nova lista
+        * Entao vamos fazer com que a listTarefa vai receber a list que trouxemos externamente
+        * Para fazer com que a list completa seja repaginada vamos avisar o Adapter que foi feito uma mudança
+        * na nossa lista como um t0d0 e para isso vamos usar o metodo chamado de notifyDataSetChanged
+        * Agora vamos conseguir fazer com que seta nossa lista e ja atualizamos t0d0s os itens que temos dentro do recycler View
+
+        * O que falta é fazer com que dentro do listFragment a gente consiga pegar nosso recycler tarefa e fazer
+        * com que ele seja criado com base neste adapter que acabamos de fazer, bora configurar ele
+
+        ** Na class ListFragment
 */
