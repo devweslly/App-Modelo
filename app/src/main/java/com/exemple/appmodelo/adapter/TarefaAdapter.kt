@@ -8,7 +8,7 @@ import com.exemple.appmodelo.model.Tarefa
 
 class TarefaAdapter : RecyclerView.Adapter<TarefaAdapter.TarefaVIewHolder>() {
 
-    var listTarefa = emptyList<Tarefa>()
+    private var listTarefa = emptyList<Tarefa>()
 
     class TarefaVIewHolder(val binding: CardLayoutBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -28,7 +28,7 @@ class TarefaAdapter : RecyclerView.Adapter<TarefaAdapter.TarefaVIewHolder>() {
         holder.binding.textResponsavel.text = tarefa.responsavel
         holder.binding.textData.text = tarefa.data
         holder.binding.switchAtivo.isChecked = tarefa.status
-        holder.binding.textCategoria.text = tarefa.categoria
+        holder.binding.textCategoria.text = tarefa.categoria.descricao
     }
 
     override fun getItemCount(): Int {

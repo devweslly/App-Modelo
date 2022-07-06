@@ -29,18 +29,18 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
-// Método para mudar de Activity
+    // Método para mudar de Activity
     // CardView1
-    private fun irTelaCardView1(){
-        binding.cardView1.setOnClickListener{
+    private fun irTelaCardView1() {
+        binding.cardView1.setOnClickListener {
             val telaCardView1 = Intent(this, TelaCardView1::class.java)
             startActivity(telaCardView1)
         }
     }
 
     // CardView2
-    private fun irTelaCardView2(){
-        binding.cardView2.setOnClickListener{
+    private fun irTelaCardView2() {
+        binding.cardView2.setOnClickListener {
             // Intent - transição de Activity
             val telaCardView2 = Intent(this, TelaCardView2::class.java)
             startActivity(telaCardView2)
@@ -48,24 +48,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     // CardView3
-    private fun irTelaCardView3(){
-        binding.cardView3.setOnClickListener{
+    private fun irTelaCardView3() {
+        binding.cardView3.setOnClickListener {
             val telaCardView3 = Intent(this, TelaCardView3::class.java)
             startActivity(telaCardView3)
         }
     }
 
     // CardView4
-    private fun irTelaCardView4(){
-        binding.cardView4.setOnClickListener{
+    private fun irTelaCardView4() {
+        binding.cardView4.setOnClickListener {
             val telaCardView4 = Intent(this, TelaCardView4::class.java)
             startActivity(telaCardView4)
         }
     }
 
     // CardView5
-    private fun irTelaCardView5(){
-        binding.cardView5.setOnClickListener{
+    private fun irTelaCardView5() {
+        binding.cardView5.setOnClickListener {
             val telaCardView5 = Intent(this, TelaCardView5::class.java)
             startActivity(telaCardView5)
         }
@@ -282,8 +282,8 @@ class MainActivity : AppCompatActivity() {
         * dentro do nosso card_layout
         * Primeiro:
         * Como o TarefaAdapter vai receber uma lista de item no futuro, vamos precisar criar dentro do TarefaAdapter
-        * um atributo que possa receber essa lista externa (var listTarefa) que vai receber no começo uma
-        * lista vazia emptyList do tipo Tarefa
+        * um atributo que possa receber essa lista externa (private var listTarefa) que vai receber no começo uma
+        * lista vazia emptyList do tipo Tarefa (criar abaixo da class TarefaAdapter)
         * Quando a gente receber nossa lista, vamos processar os dados desta lista dentro do onBindViewHolder
 
         * O onBindViewHolder vai sempre recuperar posição atual deste item por meio do position
@@ -303,7 +303,7 @@ class MainActivity : AppCompatActivity() {
 
         * Quantas vezes que o onBindViewHolder vai precisar criar os itens dentro do recyclerView
         * Entao vamos passar dentro do getItemCount o tamanho da nossa lista por meio do return
-        * vamos passar nosso returno com base na nossa listtarefa.size
+        * vamos passar nosso retorno com base na nossa listtarefa.size
 
         ** Para finalizar, vamos criar um metodo para setar a nossa lista
 
@@ -317,5 +317,110 @@ class MainActivity : AppCompatActivity() {
         * O que falta é fazer com que dentro do listFragment a gente consiga pegar nosso recycler tarefa e fazer
         * com que ele seja criado com base neste adapter que acabamos de fazer, bora configurar ele
 
-        ** Na class ListFragment
+        ** Configurar o RecyclerView dentro do ListFragment
+
+        * Configurando o RecyclerView com base no Adapter que criamos (TarefaAdapter)
+        * Vamos configurar o RecyclerView e jogar ele dentro do componente recyclerTarefa (no layout fragment_list)
+        * para fazermos nossa lista
+        * vamos criar uma variavel para guardar um objeto do nosso TarefaAdapter (val adapter = TarefaAdapter())
+        * Vamos acessar nosso recyclerTarefa por meio do binding.
+        * E para o recyclerView funcione da maneira correta, para isso vamos:
+        * 1 - Configurar quem vai ser o layoutManager deste nosso recyclerTarefa, ou seja, de que forma os itens vao ficar
+        * populados dentro da lista (queremos o efeito de um item debaixo do outro).
+        * Entao vamos precisar de um LinearLayoutManager(context) e para criar um objeto dele, vamos precisar de um context
+        * 2 - Configurar o adapter e vamos fazer ele receber a instancia do nosso adapter
+        * 3 - Agora vamos falar para que o recyclerTarefa que todos os itens terá um tamanho fixo com setHasFixedSize(true)
+
+        * Agora vamos deixar o recyclerView com um lista de teste utilizando o listTarefa e para isso:
+        * Vamos pegar a instancia do adapter que criamos com .setList(listTarefa)
+        * matendo nossa listTarefa que é o parametro que ele recebe
+        * setamos o que o recyclerView precisa para ele funcionar (adapter.setList(listTarefa))
+        * Em TarefaAdapter, precisamos deixar no listTarefa como private
+        * justamente para se possivel setar ela a partir do metodo setList
+
+        *** Padrões de Arquitetura
+
+        * Componentes de Arquitetura
+
+        * Temos um problema quando rotacionamos nossa tela, os dados são perdidos e a tela é recriada novamente
+        * Quando viro a tela, ela é destruída e recriada (rodando o onCreate) e nossos dados não sobrevivem a este ciclo de vida
+        * Este problema é solucionado com ajuda na ViewModel
+        * Vamos separar nossa aplicativo em duas camadas: UI (tela que vai aparecer para o usuario) e um para Persistir os dados
+
+        * Vamos criar uma class MainViewModel (ViewModel principal do aplicativo)
+        * Para esta classe ser uma ViewModel precisamos estender ela da nossa classe ViewModel()
+        * Esta já consegue ser uma ViewModel e já vai servir para sobreviver ao ciclo de vida da MainActivity
+        * Dentra da class MainViewModel vai precisar ter um dado (uma variavel) que vai persistir os valores que ela vai ter
+        * E um metodo para colocar mais valores para este dado
+
+        * Agora devemos instanciar este class MainViewModel dentro da MainActivity e fazer
+        * ela sobreviver ao ciclo de vida
+
+        ** Na MainActivity
+
+        * vamos instanciar a MainViewModel para conseguir utilizar ela
+        * private lateinit var mainViewModel: MainViewModel
+
+        * Depois do setContentView
+        * vamos instanciar um objeto da MainViewModel para conseguir sobreviver este ciclo
+        * Para conseguir ter este efeito a var mainViewModel vai receber a class ViewModelProvider(this)
+        * E este ViewModelProvider fala onde a gente vai instanciar este objeto na nossa MainViewModel,
+        * qual o ciclo de vida ele vai seguir.
+        * No nosso caso vamos colocar (this), pois será nossa MainActivity que irá cuidar disso
+        * Vamo colocar um ponto e usar o metodo get(), onde iremos indicar qual classe da nossa ViewModel vamos
+        * colocar aqui, que no nosso caso é a MainViewModel e precisamos converter esta classe para Java
+        * mainViewModel = ViewModelProvider(owner: this).get(MainViewModel::class.java)
+
+        * Com essa nossa instanciar agora podemos sobreviver ao ciclo de vida
+        * Agora vamos trocar a lógica
+        * Vamos pegar os dados da MainViewModel que irá sobreviver ao ciclo de vida da MainActivity mesmo que a tela seja destruida
+
+        ** LiveData
+
+        * O LiveData é uma classe que consegue fazer com que geramos dados que possam ser observados
+        * Nossa UI vai ficar observando um dado que fica dentro da nossa MainViewModel
+        * e a partir que este dado for alterado, o nosso LiveData vai mandar uma resposta
+        * para nossa UI indicando que o dado foi alterado e a nossa UI vai atualizar este dado
+        * automaticamente para o usuario
+
+        ** Dentro da Class MainViewModel
+
+        * O LiveData sempre é uma valor imutável. Para ele ser mutável vamos usar um componente chamado de
+        * MutableLiveData
+
+        * Vamos pegar o nosso dado (aqui vai depender do que esta sendo usado, uma var ou val) e fazer ele
+        * receber um MutableLiveData do tipo da sua val com um valor inicial
+        * (exemplo: val cont = MutableLiveData<Int>(0))
+        * Tornar um valor observavel
+        * Dentro da MainActivity e fazer observar valor a partir do onCreate
+        * fazendo a MainActivity ser um observador da variavel definifa como um MutableLiveData
+
+        *** Retrofit
+
+        * - Classe de modelo para quando for fazer as requisições vamos retornar objetos JSON
+        * (no nosso caso categoria e tarefa. Vamos precisar de uma classe de modelo para as duas)
+        * - Interface de serviço que vai conter todos os metodos HTTP (todos os verbos que vamos utilizar)
+        * e um objeto de instância do Retrofit que vai criar o Retorfit no nosso projeto e vai ter a Url base da nossa API
+        * - Repositório que vai conseguir pegar os verbos HTTP que é feito na classe de serviço para transformar em metodos
+        * - ViewModel onde vamos conseguir processar os dados do repositório e preparar eles para serem mostrados para o usuário
+
+        * Para implementação completa do retrofit vamos precisar ter
+        * Primeiro: Dentro do build.gradle(Module) vamos implementar as dependecias do Retrofit e Corrotinas em dependencies
+        * Vamos agora implementar as classes de modelo dentro do nosso projeto. Elas irão consistir de basicamente saber quais
+        * os dados vai pegar de cada um dos objetos da nossa API. Então vamos montar a classe de modelo com base nos endpoint
+        * irão retornar (que é que ta na class Tarefa, que ainda falta implementar o Id:Long)
+        * vamos mudar o tipo do atributo categoria, pq ele ira guardar um objeto Categoria, entao vamos
+
+        * Criar uma data Class Categoria no pacote model que terar os atributos
+        * var id: Long,
+        * var descricao: String,
+        * var tarefas: List<Trefa>
+
+        * Feito isso vamos mudar o tipo do atributo categoria de String para Categoria
+        * Agora temos as duas classes de modelos (Tarefa e Categoria)
+        * com todos os dados que a API precia
+
+        * Agora vamos precisar mudar dentro do nosso dentro do adapter (TarefaAdater)
+        * em nosso tarefa.categoria queremos tirar dele nossa descrião e nao o objeto tod0
+        *
 */

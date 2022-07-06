@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.exemple.appmodelo.adapter.TarefaAdapter
 import com.exemple.appmodelo.databinding.FragmentListBinding
 import com.exemple.appmodelo.model.Tarefa
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -23,6 +25,7 @@ class ListFragment : Fragment() {
         binding = FragmentListBinding.inflate(layoutInflater, container, false)
         val view = inflater.inflate(R.layout.fragment_list, container, false)
 
+        // Lista padrão configurada
         val listTarefa = listOf(
             Tarefa(
                 "Lavar a louça",
@@ -49,6 +52,14 @@ class ListFragment : Fragment() {
                 "Dia-a-Dia"
             ),
         )
+
+        //Configurando o RecyclerView
+        val adapter = TarefaAdapter()
+        binding.recyclerTarefa.layoutManager = LinearLayoutManager(context)
+        binding.recyclerTarefa.adapter = adapter
+        binding.recyclerTarefa.setHasFixedSize(true)
+
+        adapter.setList(listTarefa)
 
         binding.floatingAdd.setOnClickListener {
             findNavController().navigate(R.id.action_listFragment_to_formFragment)
